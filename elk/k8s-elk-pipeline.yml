@@ -1,0 +1,61 @@
+pipeline {
+
+    agent any
+
+    parameters {
+        string(name: 'replicas', defaultValue: '1', description: 'Number of replicas to run')
+        string(name: 'outFilePath', defaultValue: '/tmp/pib-output-${env.BUILD_NUMBER}.json', description: 'Out file for writing the ELK information')        
+    }
+    
+    stages {
+
+        stage('Deploy elastic') {
+            steps {
+               sh '''
+                   kubectl create ns elk || :
+                   kubectl apply -f elk/k8s-config/k8s-elasticsearch-config.yaml --namespace=elk
+                   '''
+                   echo 'Sleeping now to give time to Elastic search to start.'
+                   sleep 200
+                }
+            }
+        
+        stage('Deploy Filebeats') {
+            steps {
+               sh '''
+                   kubectl apply -f elk/k8s-config/k8s-filebeats-config.yaml --namespace=elk
+                   '''
+                   sleep 30
+           }
+        }
+        
+        stage('Deploy Kibana') {
+            steps {
+               sh '''
+                   kubectl apply -f elk/k8s-config/k8s-kibana-config.yaml --namespace=elk
+                   kubectl apply -f ./kubernetes/ingress/kibana-ingress.yaml --namespace=elk
+                   '''
+                   sleep 30
+           }
+        }       
+
+        stage('Deploy Logstash') {
+            steps {
+               sh '''
+                   kubectl apply -f elk/k8s-config/k8s-logstash-config.yaml --namespace=elk
+                   '''
+                   sleep 30
+           }
+        }   
+        
+        stage('Create Ingress') {
+            steps {
+               sh '''
+                   kubectl apply -f kubernetes/ingress/kibana-ingress.yaml --namespace=elk
+                   '''
+                   sleep 30
+           }
+        }  
+        
+    }
+}

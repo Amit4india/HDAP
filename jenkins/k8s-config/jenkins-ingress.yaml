@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+        #annotations:
+          #    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          #    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+          #    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: hcl-ingress-jenkins
+  namespace: jenkins
+spec:
+  rules:
+    - host: jenkins.wawa.demos.hclets.com
+      http:
+        paths:
+        -  path: /
+           backend:
+             serviceName: jenkins
+             servicePort: 80

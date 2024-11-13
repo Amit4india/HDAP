@@ -1,0 +1,30 @@
+# Nexus Deployment
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: nexus
+  namespace: nexus
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: nexus
+      labels: 
+        app: nexus
+    spec:
+      securityContext:
+        fsGroup: 2000
+      containers:
+        - name: nexus
+          image: sonatype/nexus3:3.26.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+              name: nexusport
+          volumeMounts:
+            - name: nexus-data
+              mountPath: /var/lib/nexus/data
+      volumes:
+        - name: nexus-data
+          persistentVolumeClaim:
+            claimName: nexus-storage

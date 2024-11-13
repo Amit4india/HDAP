@@ -1,0 +1,27 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kiali
+  namespace: istio-system
+  labels:
+    app: kiali
+    operator.istio.io/component: AddonComponents
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.5.3
+    release: istio
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"kiali","operator.istio.io/component":"AddonComponents","operator.istio.io/managed":"Reconcile","operator.istio.io/version":"1.5.3","release":"istio"},"name":"kiali","namespace":"istio-system"},"spec":{"ports":[{"name":"http-kiali","port":20001,"protocol":"TCP"}],"selector":{"app":"kiali"},"type":"ClusterIP"}}
+spec:
+  ports:
+    - name: http-kiali
+      protocol: TCP
+      port: 80
+      targetPort: 20001
+  selector:
+    app: kiali
+  clusterIP: 100.71.3.51
+  type: ClusterIP
+  sessionAffinity: None
+status:
+  loadBalancer: {}

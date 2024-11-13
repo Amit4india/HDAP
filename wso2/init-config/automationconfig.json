@@ -1,0 +1,8 @@
+{
+	"publisher_url":"https://NODE_IP:32293",
+	"token_url":"https://NODE_IP:30243/token",
+	"username":"admin",
+	"password":"admin",
+	"env_name":"dev",
+	"blocklist_ip":"192.101.1.1"
+}

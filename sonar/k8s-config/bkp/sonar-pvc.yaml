@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sonar-postgres-data
+  namespace: sonar
+  labels: 
+    app: Sonar-Postgres-Data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: sonar-storage
+  resources:
+    requests:
+      storage: 4Gi

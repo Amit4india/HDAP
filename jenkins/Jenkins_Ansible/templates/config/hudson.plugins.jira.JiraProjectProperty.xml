@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.jira.JiraProjectProperty_-DescriptorImpl plugin="jira@2.3">
+  <sites>
+    <hudson.plugins.jira.JiraSite>
+      <url>https://almsmart.hclets.com/</url>
+      <alternativeUrl>https://almsmart.hclets.com/</alternativeUrl>
+      <useHTTPAuth>false</useHTTPAuth>
+      <userName>manuja.r</userName>
+      <password>{AQAAABAAAAAQ19yBnqgp55/J0NfKv8DOr8iXFoTDISNvu4LkCuNEOFc=}</password>
+      <supportsWikiStyleComment>false</supportsWikiStyleComment>
+      <recordScmChanges>false</recordScmChanges>
+      <updateJiraIssueForAllStatus>true</updateJiraIssueForAllStatus>
+      <timeout>10</timeout>
+      <dateTimePattern></dateTimePattern>
+      <appendChangeTimestamp>false</appendChangeTimestamp>
+    </hudson.plugins.jira.JiraSite>
+  </sites>
+</hudson.plugins.jira.JiraProjectProperty_-DescriptorImpl>

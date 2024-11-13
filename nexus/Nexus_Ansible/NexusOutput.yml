@@ -1,0 +1,31 @@
+---
+- hosts: nexus_host
+  user: root
+  become_method: sudo
+  gather_facts: True
+  connection: local
+  tasks:
+    - include_vars: vars/input.json
+    - include_vars: NexusParams.yml
+    - name: Create a JSON file to store Jenkins filesystem output
+       file: path={{ out_File_Path }}/NexusOutput.json state=touch mode=0777
+
+    - name: Set facts
+      set_fact:
+        UserName: "{{ nexus_admin_username }}"
+        Password: "{{ nexus_admin_password }}"
+        NexusURL: "http://{{ host_ip }}:{{ nexus_port }}/nexus"
+
+    - name: Set facts and Print output in json format
+      set_fact:
+         a: '\"host_ip\":   \"{{ host_ip }}\"'
+         b: '\"nexus_url\":  \"{{ NexusURL }}\"'
+         c: '\"nexus_username\":  \"{{ UserName }}\"'
+         d: '\"nexus_password\":  \"{{ Password }}\"'
+
+    - name: Print output in JSON format
+      shell: echo "{ "{{ a }}",  "{{ b }}",  "{{ c }}",  "{{ d }}"  }" > "{{ out_File_Path }}"
+     
+
+ 
+

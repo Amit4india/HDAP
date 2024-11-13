@@ -1,0 +1,8 @@
+{
+   "host_ip": "Enter_IP",
+   "sonar_port": "SONAR_PORT",
+   "sonar_version":"SONAR_VERSION",
+   "sonar_admin_username": "SONAR_ADMIN_USERNAME",
+   "sonar_admin_password": "SONAR_ADMIN_PASSWORD",
+   "out_File_Path": "OUT_FILE_PATH"
+   }

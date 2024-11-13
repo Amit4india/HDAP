@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: jenkins
+  namespace: jenkins
+spec:
+  selector:
+    app: jenkins
+  ports:
+    - port: 80 # Default Port to listen from ingress.
+      targetPort: 8080 # Port to forward to inside the pod (image running pod )

@@ -1,0 +1,29 @@
+---
+- hosts: jenkins_host
+  user: root
+  gather_facts: True
+  connection: local
+  tasks:
+    - include_vars: vars/input.json
+    - include_vars: JenkinsParams.yml
+
+    - name: Create a JSON file to store Jenkins details under playbook directory
+      file: path={{ playbook_dir }}/JenkinsOutput.json state=touch
+
+    - name: Set facts
+      set_fact:
+        Jenkins_url: "http://{{ host_ip }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}"
+
+    - name: Set facts and Print output in json format
+      set_fact:
+         a: '\"host_ip\":   \"{{ host_ip }}\"'
+         b: '\"jenkins_url\":  \"{{ Jenkins_url }}\"'
+         c: '\"jenkins_admin_username\":  \"{{ jenkins_admin_username }}\"'
+         d: '\"jenkins_admin_password\":  \"{{ jenkins_admin_password }}\"'
+
+    - name: Print output in JSON format
+      shell: echo "{ "{{ a }}",  "{{ b }}",  "{{ c }}",  "{{ d }}"  }" > "{{ outFilePath }}"
+
+  roles:
+    
+

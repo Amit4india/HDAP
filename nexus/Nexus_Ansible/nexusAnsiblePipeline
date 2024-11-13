@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    stages {
+        stage ('Code checkout'){
+            steps {
+
+                git	(
+                        branch: 'master',
+                        url:'https://repo.hclets.com/dna-pib/PIB_MAIN.git',
+                        credentialsId: 'accesstogit'
+                )
+
+            }
+        }
+         stage ('Configuring Dynamic_IP') {
+                 sh '''
+                     cd sonar_setup/Sonar_Ansible/
+                     chmod +x dynamicip.sh
+                     ./dynamicip.sh
+                     '''
+        stage ('Configuring inputfileupdate') {
+           steps {
+           sh '''
+             cd nexus/Nexus_Ansible/
+             chmod +x inputfileupdate.sh
+             ./inputfileupdate.sh $USERNAME $PASSWORD $PORT $VERSION
+             '''
+        }
+        }             
+        stage ('Running NEUXS Configuration Job') {
+            steps {
+
+                ansiColor('xterm') {
+                    ansiblePlaybook(
+                            installation: 'ansible',
+                            playbook: 'nexus_setup/Nexus_Ansible/nexus.yml',
+                            inventory: 'nexus_setup/Nexus_Ansible/dev',
+                            credentialsId: 'sshansiblekey',
+                            disableHostKeyChecking: true,
+                            colorized: true
+                            )
+                }
+            }
+        }
+
+
+    }
+}

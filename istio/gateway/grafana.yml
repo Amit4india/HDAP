@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-grafana # Individual name (we'll use this later in VirtualServer)
+  namespace: istio-system # Namespace
+spec:
+  selector:
+    istio: ingressgateway # Specify the ingressgateway created for us
+  servers:
+  - port:
+      number: 15031 # Service port to watch
+      name: http-grafana
+      protocol: HTTP
+    hosts:
+    - "*" # Host to watch on, could be "*"

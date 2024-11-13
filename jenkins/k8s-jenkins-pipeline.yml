@@ -1,0 +1,23 @@
+pipeline {
+
+    agent any
+
+    parameters {
+        string(name: 'replicas', defaultValue: '1', description: 'Number of replicas to run')
+        string(name: 'outFilePath', defaultValue: '/tmp/pib-output-${env.BUILD_NUMBER}.json', description: 'Out file for writing the Jenkins information')        
+    }
+    
+    stages {
+
+        stage('Deploy Jenkins') {
+            steps {
+               sh '''
+                   kubectl create namespace jenkins || :
+                   kubectl apply -f jenkins/k8s-config/k8s-jenkins-config.yaml -n jenkins
+                   kubectl apply -f ./kubernetes/ingress/jenkins-ingress.yaml -n jenkins
+                   '''
+                   sleep 10
+                }
+            }
+    }
+}

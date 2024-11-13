@@ -1,0 +1,94 @@
+---
+# Nexus Deployment
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: nexus
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: nexus
+      labels: 
+        app: nexus
+    spec:
+      securityContext:
+        fsGroup: 2000
+      containers:
+        - name: nexus
+          image: sonatype/nexus3:3.26.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+              name: nexusport
+          volumeMounts:
+            - name: nexus-data
+              mountPath: /var/lib/nexus/data
+      volumes:
+        - name: nexus-data
+          persistentVolumeClaim:
+            claimName: nexus-storage
+---
+#PV for Nexus
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nexus-storage-pv
+  labels:
+    type: local
+    app: Nexus-Storage-Data
+spec:
+  storageClassName: nexus-storage-data
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/lib/nexus/data"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nexus-storage
+  labels: 
+    app: nexus-storage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: nexus-storage-data
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+#Storage class for Nexus
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: nexus-storage-data
+  labels:
+    app: nexus-storage-data
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  zone: eu-west-2a
+allowVolumeExpansion: true
+
+---
+#Service for Nexus
+kind: Service
+apiVersion: v1
+metadata:
+  name: nexus
+  labels:
+    app: nexus
+spec:
+        #  type: ClusterIp
+  ports:
+    - port: 80
+      targetPort: 8081
+      name: nexusport
+  selector:
+    app: nexus
+#  type: LoadBalancer

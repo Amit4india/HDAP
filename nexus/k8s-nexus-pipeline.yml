@@ -1,0 +1,23 @@
+pipeline {
+
+    agent any
+
+    parameters {
+        string(name: 'replicas', defaultValue: '1', description: 'Number of replicas to run')
+        string(name: 'outFilePath', defaultValue: '/tmp/pib-output-${env.BUILD_NUMBER}.json', description: 'Out file for writing the Nexus information')        
+    }
+    
+    stages {
+
+        stage('Deploy Nexus') {
+            steps {
+               sh '''
+                   kubectl create namespace nexus || :
+                   kubectl apply -f nexus/k8s-config/k8s-nexus-config.yaml -n nexus
+                   kubectl apply -f ./kubernetes/ingress/nexus-ingress.yaml -n nexus
+                   '''
+                   sleep 10
+                }
+            }
+    }
+}

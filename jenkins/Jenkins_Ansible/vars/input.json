@@ -1,0 +1,8 @@
+{
+   "host_ip": "Enter_IP",
+   "jenkins_http_port": "JENKINS_HTTP_PORT",
+   "jenkins_version": "JENKINS_VERSION",
+   "jenkins_admin_username": "JENKINS_ADMIN_USERNAME",
+   "jenkins_admin_password": "JENKINS_ADMIN_PASSWORD", 
+   "password": "OUT_FILE_PATH""
+}

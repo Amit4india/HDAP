@@ -1,0 +1,29 @@
+{
+  "subscriptionId": "faae5fcc-cbae-40c4-bf43-89931630d313",
+  "applicationId": "05fd1758-d4ac-438f-9116-a1e9d1d15220",
+  "apiId": "b3cf66b7-6f4c-4584-9f18-a21678ec948f",
+  "apiInfo": {
+    "id": "b3cf66b7-6f4c-4584-9f18-a21678ec948f",
+    "name": "Petstore",
+    "description": "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
+    "context": "/v2/1.0.5",
+    "version": "1.0.5",
+    "provider": "admin",
+    "type": "HTTP",
+    "lifeCycleStatus": "PUBLISHED"
+  },
+  "applicationInfo": {
+    "applicationId": "05fd1758-d4ac-438f-9116-a1e9d1d15220",
+    "name": "PetstoreApp",
+    "throttlingPolicy": "Unlimited",
+    "description": "Pet Store Application",
+    "status": "APPROVED",
+    "groups": [],
+    "subscriptionCount": 1,
+    "attributes": {},
+    "owner": "admin"
+  },
+  "throttlingPolicy": "Unlimited",
+  "status": "UNBLOCKED",
+  "redirectionParams": "string"
+}

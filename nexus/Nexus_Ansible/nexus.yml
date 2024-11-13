@@ -1,0 +1,21 @@
+---
+- hosts: nexus_host
+  user: root
+  become_method: sudo
+  gather_facts: false
+  connection: local
+  tasks:
+    - include_vars: vars/input.json
+    - include_vars: NexusParams.yml
+    - name: Accept new ssh fingerprints
+      shell: ssh-keyscan -H {{ host_ip }} >> ~/.ssh/known_hosts
+      #    - name: Add IP to ec2_hosts group
+      # local_action: add_host hostname={{ host_ip }} groupname=launched
+      # when: '"AWS" == env'
+      #- name: Add IP to VM_hosts group
+      # local_action: add_host hostname={{ host_ip }} ansible_sudo_pass={{ password }} ansible_ssh_pass={{ password }} groupname=launched
+      #when: '"VM" == env'
+
+- include: AWS.yml
+
+- include: NexusOutput.yml

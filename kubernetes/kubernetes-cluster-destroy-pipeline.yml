@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+	
+	parameters {
+		string(name: 'clustername', defaultValue:'kumardemo10.k8s.local' , description: '')
+        string(name: 'kopstatestore', defaultValue:'s3://cluster.kubernetesdevops.vpc' , description: 'Enter the no of Master')
+    }
+	
+	stages {
+        
+		stage ('Cluster Delete Approval'){
+			steps{
+				timeout(time: 5, unit: 'HOURS') {
+					input message: "Do You want to Delete Cluster : ${clustername} ?", ok: 'Approve'
+				}
+			}
+		} 
+		
+		stage('DestroyCluster') {
+			steps{
+				echo 'Destroying cluster'
+				script {
+					  try {
+						retry(count: 3 ){
+							withAWS(credentials:'awsaccesskey') {
+									sh returnStdout: true, script: "echo 'Destroying cluster : ${clustername} - ${kopstatestore}' "
+									sh "kops delete cluster --name=${clustername} --state=${kopstatestore} --yes"
+								}
+							}
+						
+					  } catch(exception) {
+						currentBuild.result = "FAILURE"
+						echo "Build failed after 3 attempts."
+						throw exception
+					  }
+				}
+			
+			}
+        }
+	}
+}

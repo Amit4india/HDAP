@@ -1,0 +1,14 @@
+{
+  "policyId": "e42fe8c0-a933-4768-8028-5cd59f7d92341",
+  "policyName": "Petstore_Throttling_Policy",
+  "displayName": "Petstore_Throttling_Policy",
+  "description": "Petstore_Throttling_Policy",
+  "isDeployed": true,
+  "defaultLimit": {
+	"type": "RequestCountLimit",
+	"timeUnit": "min",
+	"unitTime": 50,
+	"requestCount": 900
+  }
+}
+

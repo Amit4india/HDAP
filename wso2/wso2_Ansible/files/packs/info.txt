@@ -1,0 +1,2 @@
+# This directory is for adding WSO2 zip file.
+# If you do not wants to fetch from remote

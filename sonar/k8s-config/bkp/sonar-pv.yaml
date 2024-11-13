@@ -1,0 +1,17 @@
+#PV for sonar
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sonar-postgres-pv
+  namespace: sonar
+  labels:
+    type: local
+    app: Sonar-Postgres-Data
+spec:
+  storageClassName: sonar-storage
+  capacity:
+    storage: 4Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/lib/postgresql/data"

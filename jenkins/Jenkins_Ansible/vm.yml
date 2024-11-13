@@ -1,0 +1,29 @@
+- hosts: jenkins_host
+  become: yes
+  become_method: sudo
+  gather_facts: True
+  pre_tasks:
+    - include_vars: vars/input.json
+    - include_vars: JenkinsParams.yml
+    - name: test for avalaible space on disk
+      assert:
+        that:
+          - item.mount != '/' or {{ item.mount == '/' and item.size_available > (item.size_total|float * 0.15) }}
+      with_items: '{{ ansible_mounts }}'
+      ignore_errors: yes
+      register: disk_free
+    - name: Fail when disk space needs attention
+      fail:
+         msg: 'Disk space needs attention.'
+      when: disk_free|failed
+    - fail: msg="not enough RAM"
+      when: ansible_memfree_mb < 400
+    - name: Fetch Java version
+      shell: java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
+      register: java_version
+      ignore_errors: yes
+  handlers:
+    - include: handlers/main.yml
+  roles:
+    - { role: java, when: java_version.stdout == "" or java_version.stdout < 1.8  }
+    - jenkins

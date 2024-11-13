@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+        #annotations:
+          #    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          #    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+          #    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: kibana
+  namespace: elk
+spec:
+  rules:      
+    - host: kibana.hdap.demos.hclets.com
+      http:
+        paths:
+        -  path: /
+           backend:
+             serviceName: kibana-kibana
+             servicePort: 5601

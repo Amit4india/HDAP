@@ -1,0 +1,117 @@
+pipeline {
+    agent any
+    parameters {
+        choice(
+                choices: ['init' , 'validate', 'plan' , 'apply', 'destroy'],
+                description: 'Select want you want to do', name: 'terraformOption'
+        )
+    }
+    stages {
+        stage ('terraform version check') {
+            steps {
+                sh 'terraform --version'
+            }
+        }
+        stage ('Code checkout'){
+            steps {
+                 git	(
+                        branch: 'master',
+                        url:'https://repo.hclets.com/dna-pib/PIB_MAIN.git',
+                        credentialsId: 'accesstogit'
+                )
+
+            }
+        }
+        stage('Terraform init') {
+//            when {
+//                // Only say hello if a "greeting" is requested
+//                expression { params.terraformOption == 'init' }
+//            }
+            steps {
+                  withAWS(credentials: 'aws-access key-P') {
+                      sh '''
+                    cd sonar_setup/Sonar_Terraform/services/Sonar_Terraform
+                    terraform init
+                    '''
+
+                    }
+
+                }
+            }
+        stage('Terraform validate') {
+            when {
+                // Only say hello if a "greeting" is requested
+                expression { params.terraformOption == 'validate' }
+            }
+            steps {
+                withAWS(credentials: 'aws-access key-P') {
+                    sh '''
+                    cd sonar_setup/Sonar_Terraform/services/Sonar_Terraform
+                    terraform validate
+                    '''
+
+                }
+
+            }
+        }
+
+        stage('Terraform plan') {
+            when {
+                // Only say hello if a "greeting" is requested
+                expression { params.terraformOption == 'plan' }
+            }
+            steps {
+                withAWS(credentials: 'aws-access key-P') {
+                    sh '''
+                    cd sonar_setup/Sonar_Terraform/services/Sonar_Terraform
+                    terraform plan 
+                    '''
+
+                }
+
+            }
+        }
+        stage('Terraform apply') {
+            when {
+                // Only say hello if a "greeting" is requested
+                expression { params.terraformOption == 'apply' }
+            }
+            steps {
+                withAWS(credentials: 'aws-access key-P') {
+                    sh '''
+                    cd sonar_setup/Sonar_Terraform/services/Sonar_Terraform
+                    terraform apply -auto-approve
+                    '''
+                    echo "Storing Dynamic_IP"
+                    sh '''
+                    cd sonar_setup/Sonar_Terraform/services/Sonar_Terraform
+                    chmod +x inventory.sh
+                    ./inventory.sh
+                    '''
+
+                }
+
+            }
+        }
+
+        stage('Terraform destroy') {
+            when {
+                // Only say hello if a "greeting" is requested
+                expression { params.terraformOption == 'destroy' }
+            }
+            steps {
+                withAWS(credentials: 'aws-access key-P') {
+                    sh '''
+                    cd sonar_setup/Sonar_Terraform/services/Sonar_Terraform
+                    terraform destroy -auto-approve
+                    '''
+
+                }
+
+            }
+        }
+
+
+        }
+    }
+

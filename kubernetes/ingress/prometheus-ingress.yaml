@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:        
+  name: prometheus-ingress
+spec:
+  rules:      
+    - host: prometheus.hdap.demos.hclets.com
+      http:
+        paths:
+        -  path: /
+           backend:
+             serviceName: prometheus
+             servicePort: 80
+

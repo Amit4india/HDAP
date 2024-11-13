@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-grafana
+  namespace: istio-system # Namespace
+spec:
+  hosts:
+  - "*" # Host, could be "*"
+  gateways:
+  - istio-grafana # Gateway, must match previous one we created
+  http:
+  - match:
+    - port: 15031 # Port, must match what was used in Gateway
+    route:
+    - destination:
+        host: grafana # Destination service, must match service name
+        port:
+          number: 3000 # Post of service, must match service port

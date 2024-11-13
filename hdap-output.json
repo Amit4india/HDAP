@@ -1,0 +1,7 @@
+[
+{ "host_ip": "13.126.40.80",  "jenkins_url": "http://13.126.40.80:8080",  "jenkins_admin_username": "admin",  "jenkins_admin_password": "admin"  }
+, 
+{ "host_ip": "15.206.203.228",  "sonar_url": "http://15.206.203.228:9000",  "sonar_username": "admin",  "sonar_password": "admin"  }
+, 
+{ "host_ip": "13.126.91.65",  "nexus_url": "http://13.126.91.65:8081/nexus",  "nexus_username": "admin",  "nexus_password": "admin123"  }
+]

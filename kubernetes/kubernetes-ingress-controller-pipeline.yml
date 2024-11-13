@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+      stages {
+      
+        stage('checking Kops Version') {
+			steps{
+				echo 'checking version'
+				script {
+							withAWS(credentials:'awsaccesskey') {
+									sh 'kops version'
+								}
+				}
+			
+			}
+        }
+        
+       stage('Create Ingress Controller') {
+       
+            steps {
+
+               sh '''
+               kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/mandatory.yaml
+               kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/aws/service-l4.yaml
+               kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/aws/patch-configmap-l4.yaml
+               '''
+                }
+        }
+
+        stage('Access Ingress') {
+             steps {
+                sh 'kubectl describe svc ingress-nginx -n ingress-nginx'
+             }
+         }
+
+        stage('Deploy Sample Application') {
+
+            steps {
+                   sh '''
+                   cd kubernetes/ingress
+                   kubectl apply -f echo-app.yml
+                   kubectl apply -f echo-ingress.yaml
+                   '''
+             }
+        }
+     }
+}

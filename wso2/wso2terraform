@@ -1,0 +1,116 @@
+pipeline {
+    agent any
+    parameters {
+        choice(
+                choices: ['validate', 'plan' , 'apply', 'destroy'],
+                description: 'Select want you want to do', name: 'terraformOption'
+        )
+    }
+    stages {
+        stage ('terraform version check') {
+            steps {
+                sh 'terraform --version'
+            }
+        }
+        stage ('Code checkout'){
+            steps {
+                cleanWs()
+                git	(
+                        branch: 'master',
+                        url:'https://repo.hclets.com/dna-pib/pib-master.git',
+                        credentialsId: 'gitaccessUI'
+                                            )
+
+            }
+        }
+        stage('Terraform init') {
+            steps {
+                  withAWS(credentials: 'awsaccesskey') {
+                      sh '''
+                    cd wso2-setup/wso2_Terraform/services/WSO2_Terraform
+                    terraform init
+                    '''
+
+                    }
+
+                }
+            }
+        stage('Terraform validate') {
+            when {
+                // Only say hello if a "greeting" is requested
+                expression { params.terraformOption == 'validate' }
+            }
+            steps {
+                withAWS(credentials: 'awsaccesskey') {
+                    sh '''
+                    cd wso2-setup/wso2_Terraform/services/WSO2_Terraform
+                    terraform validate
+                    '''
+
+                }
+
+            }
+        }
+
+        stage('Terraform plan') {
+            when {
+                // Only say hello if a "greeting" is requested
+                expression { params.terraformOption == 'plan' }
+            }
+            steps {
+                withAWS(credentials: 'awsaccesskey') {
+                    sh '''
+                    cd wso2-setup/wso2_Terraform/services/WSO2_Terraform
+                    terraform plan
+                    '''
+                     echo "Storing Dynamic_IP"
+                                   sh '''
+                                    cd wso2-setup/wso2_Terraform/services/WSO2_Terraform
+                                    chmod +x inventory.sh
+                                    ./inventory.sh
+                                     '''
+
+                }
+
+            }
+        }
+        stage('Terraform apply') {
+            when {
+                // Only say hello if a "greeting" is requested
+                expression { params.terraformOption == 'apply' }
+            }
+            steps {
+                withAWS(credentials: 'awsaccesskey') {
+                    sh '''
+                    cd wso2-setup/wso2_Terraform/services/WSO2_Terraform
+                    terraform init
+                    terraform plan
+                    terraform apply -auto-approve
+                    '''
+
+                }
+
+            }
+        }
+
+        stage('Terraform destroy') {
+            when {
+                // Only say hello if a "greeting" is requested
+                expression { params.terraformOption == 'destroy' }
+            }
+            steps {
+                withAWS(credentials: 'awsaccesskey') {
+                    sh '''
+                    cd wso2-setup/wso2_Terraform/services/WSO2_Terraform
+                    terraform destroy -auto-approve
+                    '''
+
+                }
+
+            }
+        }
+
+
+        }
+    }
+

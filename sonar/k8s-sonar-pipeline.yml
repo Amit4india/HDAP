@@ -1,0 +1,32 @@
+pipeline {
+
+    agent any
+
+    parameters {
+        string(name: 'replicas', defaultValue: '1', description: 'Number of replicas to run')
+        string(name: 'outFilePath', defaultValue: '/tmp/pib-output-${env.BUILD_NUMBER}.json', description: 'Out file for writing the SONAR information')        
+    }
+    
+    stages {
+
+        stage('Create Postgres') {
+            steps {
+               sh '''
+                   kubectl create namespace sonar || :
+                   kubectl apply -f sonar/k8s-config/k8s-postgres-config.yaml -n sonar
+                   '''
+                   sleep 10
+                }
+            }
+        
+        stage('Deploy SONAR') {
+            steps {
+               sh '''
+                   kubectl apply -f sonar/k8s-config/k8s-sonar-config.yaml -n sonar
+                   kubectl apply -f ./kubernetes/ingress/sonar-ingress.yaml -n sonar
+                   '''
+                   sleep 30
+           }
+        }
+    }
+}

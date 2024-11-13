@@ -1,0 +1,23 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: example-ingress
+spec:
+  rules:
+    - 
+      http:
+        paths:
+          - 
+            backend:
+              serviceName: maggie-service
+              servicePort: 5678
+            path: /maggie
+          - 
+            backend:
+              serviceName: ing-service
+              servicePort: 5678
+            path: /ing
+

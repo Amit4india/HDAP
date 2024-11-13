@@ -1,0 +1,43 @@
+{
+  "alerts": [
+    {
+      "id": 1,
+      "name": "AbnormalRequestsPerMin",
+      "configuration": [
+        {
+          "configurationId": "UGl6emFTaGFja0FQSSsxLjAuMCtEZWZhdWx0QXBwbGljYXRpb24K",
+          "configuration": {
+            "apiName": "Petstore",
+            "apiVersion": "1.0.5",
+            "applicationName": "PetstoreApp",
+            "requestConunt": "12"
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "AbnormalBackendTime",
+      "configuration": [
+        {
+          "configurationId": "UGV0c3RvcmUjMS4wLjUjY2FyYm9uLnN1cGVy",
+          "configuration": {
+            "apiName": "Petstore",
+            "apiVersion": "1.0.5",
+            "apiCreator": "admin",
+            "apiCreatorTenantDomain": "carbon.super",
+            "thresholdBackendTime": "300"
+          }
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "ApiHealthMonitor",
+      "configuration": []
+    }
+  ],
+  "emailList": [
+    "wso2admin@hcl.com"
+  ]
+}}

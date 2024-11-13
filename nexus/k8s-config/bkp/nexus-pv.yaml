@@ -1,0 +1,17 @@
+#PV for Nexus
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nexus-storage-pv
+  namespace: nexus
+  labels:
+    type: local
+    app: Nexus-Storage-Data
+spec:
+  storageClassName: nexus-storage-data
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/lib/nexus/data"

@@ -1,0 +1,18 @@
+---
+jenkins_connection_delay: 30 
+jenkins_connection_retries: 3
+jenkins_home: "/var/lib/jenkins"
+jenkins_hostname: "Enter_IP"
+jenkins_jar_location: "/opt/jenkins-cli.jar"
+jenkins_url_prefix: ""
+jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
+jenkins_admin_password_file: ""
+jenkins_repos_url: "deb https://pkg.jenkins.io/debian binary/"        # For Redhat - jenkins_repos_url: https://pkg.jenkins.io/redhat/jenkins.repo
+jenkins_repos_key_url: "https://pkg.jenkins.io/debian/jenkins.io.key" # For Redhat - jenkins_repos_key_url: https://pkg.jenkins.io/redhat/jenkins.io.key
+jenkins_pkgs_url: "https://pkg.jenkins.io/debian/binary/"             # For Redhat - jenkins_pkgs_url: https://pkg.jenkins.io/redhat
+jenkins_init_file: "/etc/default/jenkins"                             # For Redhat - jenkins_init_file: /etc/sysconfig/jenkins
+jenkins_http_port_param: "HTTP_PORT"                                  # For Redhat - jenkins_http_port_param: JENKINS_PORT
+jenkins_java_options_env_var: "JAVA_ARGS"                             # For Redhat - jenkins_java_options_env_var: JENKINS_JAVA_OPTIONS
+java_home: "/usr/lib/jvm/java-8-openjdk-amd64"                        # For Redhat -     java_home: "/usr/java/jdk1.8.*"
+java_packages: "openjdk-8-jdk"                                         # For Redhat -     java_packages: "java-1.8.0-openjdk"
+

@@ -1,0 +1,17 @@
+#Service for Nexus
+kind: Service
+apiVersion: v1
+metadata:
+  name: nexus
+  namespace: nexus
+  labels:
+    app: nexus
+spec:
+        #  type: ClusterIp
+  ports:
+    - port: 80
+      targetPort: 8081
+      name: nexusport
+  selector:
+    app: nexus
+#  type: LoadBalancer

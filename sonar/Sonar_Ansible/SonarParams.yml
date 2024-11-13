@@ -1,0 +1,6 @@
+---
+workspace: "/usr/share"
+sonar_download_url: "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-{{ sonar_version }}.zip"
+sonar_version_directory: "sonarqube-{{ sonar_version }}"
+java_home: "/usr/lib/jvm/java-8-openjdk-amd64"     # For Redhat -     java_home: "/usr/java/jdk1.8.*"
+java_packages: "openjdk-8-jdk"                     # For Redhat -     java_packages: "java-1.8.0-openjdk"

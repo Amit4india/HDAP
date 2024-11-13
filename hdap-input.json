@@ -1,0 +1,104 @@
+{
+  "jenkins": {
+    "provision": "no",
+    "properties": {
+      "jenkins_username": "admin",
+      "jenkins_password": "admin123",
+      "jenkins_port": "8080",
+      "jenkins_version": "2.240"
+    }
+  },
+  "sonar": {
+    "provision": "no",
+    "properties": {
+      "sonar_username": "admin",
+      "sonar_password": "admin",
+      "sonar_port": "9000",
+      "sonar_version": "7,4"
+    }
+  },
+  "nexus": {
+    "provision": "no",
+    "properties": {
+      "nexus_username": "admin",
+      "nexus_password": "admin123",
+      "nexus_version": "3.24.0-02",
+      "nexus_port": "8081"
+    }
+  },
+  "kubernetes": {
+    "provision": "no",
+    "properties": {
+      "cluster_name": "pibdemo.k8s.local",
+      "master_nodes_count": "1",
+      "master_nodes_spec": "t2.2xlarge",
+      "nodes_count": "2",
+      "nodes_spec": "t2.2xlarge",
+      "kops_state_store": "s3://cluster.kubernetesdevops.vpc",
+      "retryCounter": "3"
+    },
+    "ingress": {
+      "provision": "no",
+      "properties": {
+        "sample-app": "yes"
+      }
+    },
+    "dashboard": {
+      "provision": "no",
+      "properties": {
+        "name": "temp"
+      }
+    },
+    "istio": {
+      "provision": "no",
+      "properties": {
+        "istio_user": "admin",
+        "istio_password": "admin"
+      }
+    }
+  },
+  "wso2": {
+    "provision": "no",
+    "properties": {
+      "replicas": "1",
+      "node_ip": "13.232.145.93"
+    }
+  },
+  "prometheus": {
+    "provision": "no",
+    "properties": {
+      "replicas": "1"
+    }
+  },
+  "elk": {
+    "provision": "no",
+    "properties": {
+      "replicas": "1"
+    }
+  },
+  "hcl-app": {
+    "provision": "no",
+    "properties": {
+      "replicas": "1"
+    },
+    "adc": {
+      "provision": "no",
+      "properties": {
+        "replicas": "1"
+      }
+    },
+    "adc-nexus": {
+      "provision": "no",
+      "properties": {
+        "replicas": "1"
+      }
+    }
+  },
+  "pib-output": {
+    "provision": "no",
+    "properties": {
+      "user": "admin",
+      "password": "admin"
+    }
+  }
+}

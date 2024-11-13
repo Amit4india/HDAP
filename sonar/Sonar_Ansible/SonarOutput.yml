@@ -1,0 +1,30 @@
+---
+- hosts: sonar_host
+  user: root
+  become_method: sudo
+  gather_facts: True
+  connection: local
+  tasks:
+    - include_vars: vars/input.json
+    - include_vars: SonarParams.yml
+    - name: Create a JSON file to store Jenkins temp location 
+      file: path={{ out_File_Path  }} state=touch mode=0777
+
+    - name: Set facts
+      set_fact:
+        UserName: "{{ sonar_admin_username }}"
+        Password: "{{ sonar_admin_password }}"
+        SonarURL: "http://{{ host_ip }}:{{ sonar_port }}"
+
+    - name: Set facts and Print output in json format
+      set_fact:
+         a: '\"host_ip\":   \"{{ host_ip }}\"'
+         b: '\"sonar_url\":  \"{{ SonarURL }}\"'
+         c: '\"sonar_username\":  \"{{ UserName }}\"'
+         d: '\"sonar_password\":  \"{{ Password }}\"'
+
+    - name: Print output in JSON format
+      shell: echo "{ "{{ a }}",  "{{ b }}",  "{{ c }}",  "{{ d }}"  }" > "{{ out_File_Path }}"
+      
+  roles: 
+    - sonar

@@ -1,0 +1,10 @@
+---
+nexus_installation_dir: '/usr/share'
+nexus_download_dir: '/tmp'
+nexus_package: 'nexus-{{ nexus_version }}-bundle.tar.gz'
+nexus_working_dir: '/var/nexus'
+nexus_os_user: 'nexus'
+nexus_os_group: 'nexus'
+nexus_os_user_shell: '/bin/bash'
+java_home: "/usr/lib/jvm/java-8-openjdk-amd64"    # For Redhat-java_home: "/usr/java/jdk1.8.*"
+java_packages: "openjdk-8-jdk"                    # For Redhat-java_packages: "java-1.8.0-openjdk"

@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:        
+  name: kiali-ingress
+spec:
+  rules:      
+    - host: kiali.hdap.demos.hclets.com
+      http:
+        paths:
+        -  path: /
+           backend:
+             serviceName: kiali
+             servicePort: 80
+

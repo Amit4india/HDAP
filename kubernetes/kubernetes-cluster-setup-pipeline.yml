@@ -1,0 +1,103 @@
+pipeline {
+    agent any
+	
+	parameters {
+		string(name: 'retryCounter', defaultValue:'3' , description: '')
+        string(name: 'masterCount', defaultValue:'3' , description: 'Enter the no of Master')
+        string(name: 'masterType', defaultValue: 't2.micro' , description: 'Enter the Master VM type')
+        string (name: 'nodeCount', defaultValue: '3' , description: 'Enter the no of Node')
+        string (name: 'nodeType', defaultValue: 't2.micro' , description: 'Enter the Node VM type')
+        string (name: 'Name', defaultValue: 'kumardemo10.k8s.local' , description: 'Enter your clusterName')
+        string (name: 'KOPS_STATE_STORE', defaultValue: 's3://cluster.kubernetesdevops.vpc' , description: 'Enter s3 bucket name')
+    }
+    
+	stages {
+        stage('checkingKopsVersion') {
+			steps{
+				echo 'checking version'
+				script {
+					  try {
+						retry(count: 3 ){
+							withAWS(credentials:'awsaccesskey') {
+									sh 'kops version'
+								}
+							}
+						
+					  } catch(exception) {
+						currentBuild.result = "FAILURE"
+						echo "Build failed after 3 attempts."
+						throw exception
+					  }
+				}
+			
+			}
+        }
+		
+		stage('CreatekopsCluster') {
+			steps{
+				echo 'creating cluster'
+                sleep 120
+                
+				script {
+					  try {
+						retry(count: 3 ){
+							withAWS(credentials:'awsaccesskey') {
+									sh "kops create cluster --cloud=aws --zones=ap-south-1b,ap-south-1a --name=${params.Name} --state=${params.KOPS_STATE_STORE} --master-count=${params.masterCount} --master-size=${params.masterType} --node-count=${params.nodeCount} --node-size=${params.nodeType} --yes"
+								}
+							}
+						
+					  } catch(exception) {
+						currentBuild.result = "FAILURE"
+						echo "Build failed after 3 attempts."
+						throw exception
+					  }
+				}
+			
+			}
+        }
+		
+		stage('ValidateCluster') {
+			steps{
+				echo 'validating cluster'
+				script {
+					  try {
+						retry(count: 3 ){
+							withAWS(credentials:'awsaccesskey') {
+									sh " kops validate cluster --name=${params.Name} --state=${params.KOPS_STATE_STORE} --wait 5m "
+								}
+							}
+						
+					  } catch(exception) {
+						currentBuild.result = "FAILURE"
+						echo "Build failed after 3 attempts."
+						throw exception
+					  }
+				}
+			
+			}
+        }
+		
+		stage('InvokeDestroyKOPSClusterApproval') {
+			steps{
+				echo 'Invoking Cluster Delete Job'
+				script {
+					  try {
+						retry(count: 3 ){
+							sh returnStdout: true, script: "echo 'Involing destroy kops cluster job'"
+							build job: 'KUMAR-kops-infra-destroy',
+							parameters: [string(name: 'clustername', value: String.valueOf("${params.Name}")), string(name: 'kopstatestore', value: String.valueOf("${params.KOPS_STATE_STORE}"))], wait: false
+						}
+						
+					  } catch(exception) {
+						currentBuild.result = "FAILURE"
+						echo "Build failed after 3 attempts."
+						throw exception
+					  }
+				}
+			
+			}
+        }
+        
+		
+	}
+}

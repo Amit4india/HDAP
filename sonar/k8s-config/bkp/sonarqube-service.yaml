@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: sonar
+  namespace: sonar
+  labels:
+    app: sonar
+spec:
+        #  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 9000
+      name: sonarport
+  selector:
+    app: sonar

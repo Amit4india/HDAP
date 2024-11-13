@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    
+    stages {
+
+        stage('Prepare Istio') {
+            steps {
+               sh '''
+                istioctl manifest apply --set profile=demo
+                kubectl create ns istio || :
+                kubectl label namespace istio istio-injection=enabled
+               '''
+            }
+        }
+
+        stage('check Service Status') {
+            steps {
+                sh '''
+                kubectl get services
+                kubectl get pods
+                kubectl get gateway
+                '''
+            }
+        }
+    }
+}

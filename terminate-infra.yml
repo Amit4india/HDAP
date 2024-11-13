@@ -1,0 +1,115 @@
+def inputJSONFile
+
+def clustername = 'kumardemo10.k8s.local'
+def kopstatestore = 's3://cluster.kubernetesdevops.vpc'
+
+pipeline {
+
+ agent any
+   
+    stages {
+        stage('readConfig') {
+            steps {
+                script {
+                     inputJSONFile = readJSON file: 'pib-input.json'
+                }				
+            }
+        }
+  
+        stage('jenkins') {
+            when {
+                expression { inputJSONFile['jenkins']['provision'] == 'yes' }
+            }		
+            steps {
+					echo "Starting to delete infra for Jenkins"
+                    withAWS(credentials:'awsaccesskey') {
+                            sh '''
+                            cd jenkins/Jenkins_Terraform/services/Jenkins_Terraform
+                            terraform init
+                            terraform destroy -auto-approve
+                            '''
+                    }                    
+            }
+       }
+       
+        stage('sonar') {
+            when {
+                expression { inputJSONFile['sonar']['provision'] == 'yes' }
+            }		
+            steps {
+					echo "Starting to delete infra for Sonar"
+                    withAWS(credentials:'awsaccesskey') {
+                            sh '''
+                            cd sonar/Sonar_Terraform/services/Sonar_Terraform
+                            terraform init
+                            terraform destroy -auto-approve
+                            '''
+                    }
+            }
+       }
+
+        stage('nexus') {
+            when {
+                expression { inputJSONFile['nexus']['provision'] == 'yes' }
+            }		
+            steps {
+					echo "Starting to delete infra for Nexus"
+                    withAWS(credentials:'awsaccesskey') {
+                            sh '''
+                            cd nexus/Nexus_Terraform/services/Nexus_Terraform
+                            terraform init
+                            terraform destroy -auto-approve
+                            '''
+                    }
+            }
+       }
+       
+        stage('kubernetes') {
+            when {
+                expression { inputJSONFile['kubernetes']['provision'] == 'yes' }
+            }		
+            steps {
+                script {
+                    echo "Starting to delete the provisioned kubernetes infra."
+                              try {
+                                retry(count: 3 ){
+                                    withAWS(credentials:'awsaccesskey') {
+                                            sh returnStdout: true, script: "echo 'Destroying cluster : ${clustername} - ${kopstatestore}' "
+                                            sh "kops delete cluster --name=${clustername} --state=${kopstatestore} --yes"
+                                        }
+                                    }
+                              } catch(exception) {
+                                currentBuild.result = "FAILURE"
+                                echo "Build failed after 3 attempts."
+                                throw exception
+                              }                    
+                }
+            }
+       }	   
+        stage('wso2') {
+            when {
+                expression { inputJSONFile['wso2']['provision'] == 'yes' }
+            }		
+            steps {
+                      echo 'provision wso2'
+            }
+       }
+	   
+        stage('prometheus') {
+            when {
+                expression { inputJSONFile['prometheus']['provision'] == 'yes' }
+            }		
+            steps {
+                      echo 'provision prometheus'
+            }
+       }
+        stage('elk') {
+            when {
+                expression { inputJSONFile['elk']['provision'] == 'yes' }
+            }		
+            steps {
+                      echo 'provision elk'
+            }
+       }	   
+    }
+}

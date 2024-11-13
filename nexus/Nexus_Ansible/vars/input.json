@@ -1,0 +1,8 @@
+{
+   "host_ip": "Enter_IP",
+   "nexus_version": "NEXUS_VERSION",
+   "nexus_port": "NEXUS_PORT",
+   "nexus_admin_username": "NEXUS_ADMIN_USERNAME",
+   "nexus_admin_password": "NEXUS_ADMIN_PASSWORD",
+   "out_File_Path": "OUT_FILE_PATH"
+   }

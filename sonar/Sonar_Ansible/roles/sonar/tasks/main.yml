@@ -1,0 +1,56 @@
+- name: Download Sonar.
+  get_url:
+    url: "{{ sonar_download_url }}"
+    dest: "{{ workspace }}/{{ sonar_version_directory }}.zip"
+
+- name: Unzip Sonar.
+  unarchive:
+    src: "{{ workspace }}/{{ sonar_version_directory }}.zip"
+    dest: "{{ workspace }}"
+    copy: no
+    creates: "{{ workspace }}/sonar/COPYING"
+- name: Creating sonar group
+  group:
+    name: sonar
+    gid: 2010
+
+- name: Creating sonar user
+  user:
+    name: sonar
+    uid: 2001
+    group: sonar 	   
+- name: Move Sonar into place.
+  shell: >
+    mv "{{ workspace }}/{{ sonar_version_directory }}" "{{ workspace }}/sonar"
+    creates={{ workspace }}/sonar/COPYING
+
+- name: Set HTTP port in Sonar config.
+  lineinfile:
+    dest: "{{ workspace }}/sonar/conf/sonar.properties"
+    regexp: '.*sonar.web.port=.*'
+    line: 'sonar.web.port={{ sonar_port }}'
+  register: sonar_http_config
+
+- name: Add sonar symlinks for service management.
+  file:
+    src: "{{ workspace }}/sonar/bin/linux-x86-64/sonar.sh"
+    dest: "{{ item }}"
+    state: link   
+    force: true 
+  with_items:
+    - /usr/bin/sonar
+    - /etc/init.d/sonar
+
+- name: Update services 
+  shell:   
+    systemctl daemon-reload  
+
+    #- name: restart sonar
+    #service: name=sonar state=restarted
+- name: change ownership  sonar
+  shell: chown -R sonar.sonar "{{ workspace }}/sonar"
+- name: restart sonar
+  shell: "{{ workspace }}/sonar/bin/linux-x86-64/sonar.sh restart" 
+  become: true
+  become_user: sonar
+  become_method: sudo

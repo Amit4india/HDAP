@@ -1,0 +1,17 @@
+#service for POSTGRES
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgresql-db
+  namespace: sonar
+  labels:
+    name: postgresql-db
+spec:
+        #  type: NodePort
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgresql-db-port
+  selector:
+    app: postgresql-sonar

@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+        #annotations:
+          #    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          #    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+          #    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: sonarqube-ingress
+spec:
+  rules:      
+    - host: sonar.hdap.demos.hclets.com
+      http:
+        paths:
+        -  path: /
+           backend:
+             serviceName: sonar
+             servicePort: 80
+

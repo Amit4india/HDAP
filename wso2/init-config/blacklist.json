@@ -1,0 +1,8 @@
+{
+  "conditionId": "2615e901-89c8-5dfe-43dc-60dbf1155299",
+  "conditionType": "IP",
+  "conditionValue": {
+	"invert": false,
+	"fixedIp": "192.1.0.1"
+  }
+}

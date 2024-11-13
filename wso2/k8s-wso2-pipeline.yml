@@ -1,0 +1,47 @@
+pipeline {
+
+    agent any
+
+    parameters {
+        string(name: 'REPLICAS', defaultValue: '1', description: 'Number of replicas to run')
+        string(name: 'NODE_IP', defaultValue: '1', description: 'IP of kubernetes node on WSO2 to be installed')
+        string(name: 'outFilePath', defaultValue: '/tmp/pib-output-${env.BUILD_NUMBER}.json', description: 'Out file for writing the WSO2 information')
+    }
+    
+    stages {
+
+        stage('Deploy WSO2') {
+            steps {
+               sh '''
+                   kubectl create namespace wso2 || :
+                   cd wso2/k8s-config
+                   chmod 755 updateNodeIp.sh
+                   echo "Updating the node IP"
+                   ./updateNodeIp.sh "${NODE_IP}"
+
+                   '''
+                }
+            }
+
+        stage('Validate WSO2') {
+            steps {
+                sh 'kubectl get ing  -n wso2'
+                sh 'kubectl get pods  -n wso2'
+                sh 'kubectl get deployment  -n wso2'
+           }
+        }
+      
+        stage('Default Configure') {
+             steps {
+              echo "Performing the init configuration in WSO2"
+              sh '''
+              cd wso2/init-config
+              chmod 755 *
+              echo "Updating the node IP"
+              ./updateNodeIp.sh "${NODE_IP}"
+              ./wso2automation.sh "automationconfig.json"
+              '''
+             }
+        }        
+    }
+}

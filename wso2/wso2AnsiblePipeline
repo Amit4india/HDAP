@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    stages {
+        stage ('Code checkout'){
+            steps {
+
+               cleanWs()
+                              git	(
+                                      branch: 'master',
+                                      url:'https://repo.hclets.com/dna-pib/pib-master.git',
+                                      credentialsId: 'gitaccessUI'
+                              )
+
+            }
+        }
+        stage ('Configuring Dynamic_IP') {
+                 steps {
+                 sh '''
+                     cd wso2-setup/wso2_Ansible
+                     chmod +x dynamicip.sh
+                     ./dynamicip.sh
+                     '''
+                }
+                }
+        stage ('Running WSO2 Configuration Job') {
+            steps {
+
+                ansiColor('xterm') {
+                    ansiblePlaybook(
+                            installation: 'ansible',
+                            playbook: 'wso2-setup/wso2_Ansible/site.yml',
+                            inventory: 'wso2-setup/wso2_Ansible/dev',
+                            credentialsId: 'sshAnsiblekey',
+                            disableHostKeyChecking: true,
+                            colorized: true
+                            )
+                }
+            }
+        }
+
+
+    }
+}

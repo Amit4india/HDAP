@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'PORT', defaultValue: '9000', description: 'sonar_http_port')
+        string(name: 'USERNAME', defaultValue: 'admin', description: 'sonar_admin_username')
+        string(name: 'PASSWORD', defaultValue: 'admin', description: 'sonar_admin_password')
+        string(name: 'VERSION', defaultValue: '7.4', description: 'sonar_version_number')
+        string(name: 'outFilePath', defaultValue: '', description: 'temp file name with path for output.')
+    }
+
+    stages {
+        stage ('Code checkout'){
+            steps {
+                git	(
+                        branch: 'master',
+                        url:'https://repo.hclets.com/dna-pib/PIB_MAIN.git',
+                        credentialsId: 'accesstogit'
+                )
+
+            }
+        }
+        stage ('Configuring Dynamic_IP') {
+         steps {
+         sh '''
+             cd sonar_setup/Sonar_Ansible
+             chmod +x dynamicip.sh
+             ./dynamicip.sh
+             '''
+        }
+        }
+		stage ('Configuring inputfileupdate') {
+         steps {
+         sh '''
+             cd /pib-master/sonar/Sonar_Ansible/
+             chmod +x inputfileupdate.sh
+             ./inputfileupdate.sh $USERNAME $PASSWORD $PORT $VERSION $OUT_FILE_PATH
+             '''
+        }
+        }
+        stage ('Running SONAR Configuration Job') {
+            steps {
+
+                ansiColor('xterm') {
+                    ansiblePlaybook(
+                            installation: 'ansible',
+                            playbook: 'sonar_setup/Sonar_Ansible/sonar.yml',
+                            inventory: 'sonar_setup/Sonar_Ansible/dev',
+                            credentialsId: 'sshansiblekey',
+                            disableHostKeyChecking: true,
+                            colorized: true
+                            )
+                }
+            }
+        }
+
+
+    }
+}
